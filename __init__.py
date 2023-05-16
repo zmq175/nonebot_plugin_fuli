@@ -51,15 +51,21 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     galleries = session.query(ImageGallery).filter(ImageGallery.gallery_title.like('%' + word + '%')).order_by(func.rand())\
         .limit(count)
     if galleries.count() > 0:
+        img_msgs = Message()
         for gallery in galleries:
             img_list = gallery.img_list
             img_list = json.loads(img_list)
             img_len = len(img_list)
             img_cnt = 1
             for img in img_list:
-                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的{word}福利图（{img_cnt} / {img_len}）"]),
-                               event=event)
-                img_cnt = img_cnt + 1
+                # 构造图片消息
+                img_msg = MessageSegment.image(img)
+                img_msgs.append(img_msg)
+                img_cnt += 1
+                # 构造转发消息
+            forward_msg = Message(img_msgs)
+            # 发送转发消息
+            await bot.send(event=event, message=forward_msg, quote=event.message_id)
     else:
         await bot.send(message="这个真没有")
 
@@ -69,14 +75,20 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     count = state["_matched_groups"][0]
     galleries = session.query(ImageGallery).order_by(func.rand()).limit(count)
     if galleries.count() > 0:
+        img_msgs = Message()
         for gallery in galleries:
             img_list = gallery.img_list
             img_list = json.loads(img_list)
             img_len = len(img_list)
             img_cnt = 1
             for img in img_list:
-                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
-                               event=event)
-                img_cnt = img_cnt + 1
+                # 构造图片消息
+                img_msg = MessageSegment.image(img)
+                img_msgs.append(img_msg)
+                img_cnt += 1
+                # 构造转发消息
+            forward_msg = Message(img_msgs)
+            # 发送转发消息
+            await bot.send(event=event, message=forward_msg, quote=event.message_id)
     else:
         await bot.send(message="这个真没有", event=event)
