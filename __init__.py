@@ -52,9 +52,9 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_list = gallery.img_list
             img_list = json.loads(img_list)
             for img in img_list:
-                await bot.send([MessageSegment.image(img), f"这是你要的{word}福利图"])
+                await bot.send(message=[MessageSegment.image(img), f"这是你要的{word}福利图"])
     else:
-        await bot.send("这个真没有")
+        await bot.send(message="这个真没有")
 
 
 @on_regex("^看(.*)?张福利$", priority=5).handle()
@@ -66,6 +66,6 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_list = gallery.img_list
             img_list = json.loads(img_list)
             for img in img_list:
-                await bot.send([MessageSegment.image(img), f"这是你要的福利图"])
+                await bot.send(message=[MessageSegment.image(img), f"这是你要的福利图"])
     else:
-        await bot.send("这个真没有")
+        await bot.send(message="这个真没有")
