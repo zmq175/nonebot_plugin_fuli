@@ -48,7 +48,7 @@ async def _(bot: Bot, event: MessageEvent):
 async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     word = state["_matched_groups"][1]
     count = state["_matched_groups"][0]
-    galleries = session.query(ImageGallery).filter(ImageGallery.gallery_title.like('%' + word + '%')).order_by(func.rand)\
+    galleries = session.query(ImageGallery).filter(ImageGallery.gallery_title.like('%' + word + '%')).order_by(func.rand())\
         .limit(count)
     if galleries.count() > 0:
         for gallery in galleries:
@@ -67,7 +67,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
 @on_regex("^看(.*)?张福利$", priority=5).handle()
 async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     count = state["_matched_groups"][0]
-    galleries = session.query(ImageGallery).order_by(func.rand).limit(count)
+    galleries = session.query(ImageGallery).order_by(func.rand()).limit(count)
     if galleries.count() > 0:
         for gallery in galleries:
             img_list = gallery.img_list
