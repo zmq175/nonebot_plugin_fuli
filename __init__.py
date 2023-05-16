@@ -1,6 +1,7 @@
 import json
 
 import nonebot
+from sqlalchemy import func
 
 from .config import Config
 
@@ -19,6 +20,7 @@ from nonebot.params import CommandArg, Arg
 
 from .model import ImageGallery
 from .mysql import session
+import random
 
 global_config = nonebot.get_driver().config
 config = Config.parse_obj(global_config)
@@ -46,13 +48,18 @@ async def _(bot: Bot, event: MessageEvent):
 async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     word = state["_matched_groups"][1]
     count = state["_matched_groups"][0]
-    galleries = session.query(ImageGallery).filter(ImageGallery.gallery_title.like('%' + word + '%')).limit(count)
+    galleries = session.query(ImageGallery).filter(ImageGallery.gallery_title.like('%' + word + '%')).order_by(func.rand)\
+        .limit(count)
     if galleries.count() > 0:
         for gallery in galleries:
             img_list = gallery.img_list
             img_list = json.loads(img_list)
+            img_len = len(img_list)
+            img_cnt = 1
             for img in img_list:
-                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的{word}福利图"]), event=event)
+                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的{word}福利图（{img_cnt} / {img_len}）"]),
+                               event=event)
+                img_cnt = img_cnt + 1
     else:
         await bot.send(message="这个真没有")
 
@@ -60,12 +67,16 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
 @on_regex("^看(.*)?张福利$", priority=5).handle()
 async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
     count = state["_matched_groups"][0]
-    galleries = session.query(ImageGallery).limit(count)
+    galleries = session.query(ImageGallery).order_by(func.rand).limit(count)
     if galleries.count() > 0:
         for gallery in galleries:
             img_list = gallery.img_list
             img_list = json.loads(img_list)
+            img_len = len(img_list)
+            img_cnt = 1
             for img in img_list:
-                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的福利图"]), event=event)
+                await bot.send(message=Message([MessageSegment.image(img), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                               event=event)
+                img_cnt = img_cnt + 1
     else:
         await bot.send(message="这个真没有", event=event)
