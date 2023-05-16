@@ -1,6 +1,6 @@
 import json
 
-from nonebot import get_driver
+import nonebot
 
 from .config import Config
 
@@ -20,7 +20,7 @@ from nonebot.params import CommandArg, Arg
 from .model import ImageGallery
 from .mysql import session
 
-global_config = get_driver().config
+global_config = nonebot.get_driver().config
 config = Config.parse_obj(global_config)
 
 print(config)
