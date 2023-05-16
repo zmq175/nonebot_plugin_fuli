@@ -13,7 +13,7 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     PrivateMessageEvent,
     MessageSegment,
-    Message
+    Message, ActionFailed
 )
 from nonebot.typing import T_State
 from nonebot.params import CommandArg, Arg
@@ -65,7 +65,20 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                 # 构造转发消息
             forward_msg = Message(img_msgs)
             # 发送转发消息
-            await bot.send(event=event, message=forward_msg, quote=event.message_id)
+            try:
+                await bot.send(event=event, message=forward_msg, quote=event.message_id)
+            except ActionFailed:
+                await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
+                img_len = len(img_list)
+                img_cnt = 1
+                for img in img_list:
+                    try:
+                        await bot.send(
+                            message=Message([MessageSegment.image(img), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                            event=event)
+                    except ActionFailed:
+                        await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
+                    img_cnt = img_cnt + 1
     else:
         await bot.send(message="这个真没有")
 
@@ -89,6 +102,19 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                 # 构造转发消息
             forward_msg = Message(img_msgs)
             # 发送转发消息
-            await bot.send(event=event, message=forward_msg, quote=event.message_id)
+            try:
+                await bot.send(event=event, message=forward_msg, quote=event.message_id)
+            except ActionFailed:
+                await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
+                img_len = len(img_list)
+                img_cnt = 1
+                for img in img_list:
+                    try:
+                        await bot.send(
+                            message=Message([MessageSegment.image(img), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                            event=event)
+                    except ActionFailed:
+                        await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
+                    img_cnt = img_cnt + 1
     else:
         await bot.send(message="这个真没有", event=event)
