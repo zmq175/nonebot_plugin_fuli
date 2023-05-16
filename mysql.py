@@ -7,7 +7,7 @@ from .config import Config
 global_config = nonebot.get_driver().config
 config = Config.parse_obj(global_config)
 engine = create_engine(
-    f"mysql+pymysql://{config.MYSQL_USER}:{config.MYSQL_PASSWORD}@{config.MYSQL_HOST}:{config.MYSQL_PORT}/{config.MYSQL_DB}?charset={config.MYSQL_CHARSET}",
+    f"mysql+pymysql://{config.mysql_user}:{config.mysql_password}@{config.mysql_host}:{config.mysql_port}/{config.mysql_db}?charset={config.mysql_charset}",
     pool_pre_ping=True, pool_recycle=3600, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
