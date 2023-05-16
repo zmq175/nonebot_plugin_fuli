@@ -23,6 +23,8 @@ from .mysql import session
 global_config = get_driver().config
 config = Config.parse_obj(global_config)
 
+print(config)
+
 Bot_NICKNAME = list(global_config.nickname)
 
 Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "福利姬bot"
