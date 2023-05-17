@@ -57,6 +57,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_list = json.loads(img_list)
             img_len = len(img_list)
             img_cnt = 1
+            img_msgs.append(gallery.gallery_title)
             for img in img_list:
                 # 构造图片消息
                 img_msg = MessageSegment.image(img)
@@ -69,6 +70,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                 await bot.send(event=event, message=forward_msg, quote=event.message_id)
             except ActionFailed:
                 await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
+                bot.send(event=event, message=gallery.gallery_title)
                 img_len = len(img_list)
                 img_cnt = 1
                 for img in img_list:
@@ -94,6 +96,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_list = json.loads(img_list)
             img_len = len(img_list)
             img_cnt = 1
+            img_msgs.append(gallery.gallery_title)
             for img in img_list:
                 # 构造图片消息
                 img_msg = MessageSegment.image(img)
@@ -105,7 +108,9 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             try:
                 await bot.send(event=event, message=forward_msg, quote=event.message_id)
             except ActionFailed:
+                
                 await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
+                bot.send(event=event, message=gallery.gallery_title)
                 img_len = len(img_list)
                 img_cnt = 1
                 for img in img_list:
