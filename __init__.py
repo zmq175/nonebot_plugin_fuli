@@ -80,7 +80,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                         await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
                     img_cnt = img_cnt + 1
     else:
-        await bot.send(message="这个真没有")
+        await bot.send(event=event, message="这个真没有")
 
 
 @on_regex("^看(.*)?张福利$", priority=5).handle()
