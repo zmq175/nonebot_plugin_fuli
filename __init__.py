@@ -83,6 +83,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                     img_cnt = img_cnt + 1
     else:
         await bot.send(event=event, message="这个真没有")
+    session.commit()
 
 
 @on_regex("^看(.*)?张福利$", priority=5).handle()
@@ -123,3 +124,4 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                     img_cnt = img_cnt + 1
     else:
         await bot.send(message="这个真没有", event=event)
+    session.commit()
