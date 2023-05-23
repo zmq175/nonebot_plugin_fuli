@@ -21,6 +21,7 @@ from nonebot.params import CommandArg, Arg
 from .model import ImageGallery
 from .mysql import session
 import random
+import aiohttp
 
 global_config = nonebot.get_driver().config
 config = Config.parse_obj(global_config)
@@ -52,35 +53,39 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
         .limit(count)
     if galleries.count() > 0:
         img_msgs = Message()
-        for gallery in galleries:
-            img_list = gallery.img_list
-            img_list = json.loads(img_list)
-            img_len = len(img_list)
-            img_cnt = 1
-            img_msgs.append(gallery.gallery_title)
-            for img in img_list:
-                # 构造图片消息
-                img_msg = MessageSegment.image(file=img, timeout=5*60*1000)
-                img_msgs.append(img_msg)
-                img_cnt += 1
-                # 构造转发消息
-            forward_msg = Message(img_msgs)
-            # 发送转发消息
-            try:
-                await bot.send(event=event, message=forward_msg, quote=event.message_id)
-            except ActionFailed:
-                await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
-                bot.send(event=event, message=gallery.gallery_title)
+        async with aiohttp.ClientSession() as client_session:
+            for gallery in galleries:
+                img_list = gallery.img_list
+                img_list = json.loads(img_list)
                 img_len = len(img_list)
                 img_cnt = 1
+                img_msgs.append(gallery.gallery_title)
                 for img in img_list:
-                    try:
-                        await bot.send(
-                            message=Message([MessageSegment.image(file=img, timeout=5*60*1000), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
-                            event=event)
-                    except ActionFailed:
-                        await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
-                    img_cnt = img_cnt + 1
+                    # 构造图片消息
+                    async with client_session.get(img) as resp:
+                        img_bytes = await resp.read()
+                        img_msg = MessageSegment.image(img_bytes)
+                    img_msgs.append(img_msg)
+                    img_cnt += 1
+                forward_msg = Message(img_msgs)
+                try:
+                    await bot.send(event=event, message=forward_msg, quote=event.message_id)
+                except ActionFailed:
+                    await bot.send(event=event, message="消息可能被风控，尝试逐条发送，可能会造成刷屏")
+                    bot.send(event=event, message=gallery.gallery_title)
+                    img_len = len(img_list)
+                    img_cnt = 1
+                    for img in img_list:
+                        async with session.get(img) as resp:
+                            img_bytes = await resp.read()
+                            try:
+                                await bot.send(
+                                    message=Message([MessageSegment.image(img_bytes), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                                    event=event)
+                            except ActionFailed:
+                                await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
+                        img_cnt = img_cnt + 1
+            # 不需要清空缓存字典
     else:
         await bot.send(event=event, message="这个真没有")
     session.commit()
