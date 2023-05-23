@@ -76,7 +76,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                     img_len = len(img_list)
                     img_cnt = 1
                     for img in img_list:
-                        async with session.get(img) as resp:
+                        async with client_session.get(img) as resp:
                             img_bytes = await resp.read()
                             try:
                                 await bot.send(
