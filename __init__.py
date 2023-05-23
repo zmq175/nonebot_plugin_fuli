@@ -60,7 +60,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_msgs.append(gallery.gallery_title)
             for img in img_list:
                 # 构造图片消息
-                img_msg = MessageSegment.image(file=img, timeout=5*60)
+                img_msg = MessageSegment.image(file=img, timeout=5*60*1000)
                 img_msgs.append(img_msg)
                 img_cnt += 1
                 # 构造转发消息
@@ -76,7 +76,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                 for img in img_list:
                     try:
                         await bot.send(
-                            message=Message([MessageSegment.image(file=img, timeout=5*60), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                            message=Message([MessageSegment.image(file=img, timeout=5*60*1000), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
                             event=event)
                     except ActionFailed:
                         await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
@@ -100,7 +100,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
             img_msgs.append(gallery.gallery_title)
             for img in img_list:
                 # 构造图片消息
-                img_msg = MessageSegment.image(file=img, timeout=5*60)
+                img_msg = MessageSegment.image(file=img, timeout=5*60*1000)
                 img_msgs.append(img_msg)
                 img_cnt += 1
                 # 构造转发消息
@@ -117,7 +117,7 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                 for img in img_list:
                     try:
                         await bot.send(
-                            message=Message([MessageSegment.image(file=img, timeout=5*60), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
+                            message=Message([MessageSegment.image(file=img, timeout=5*60*1000), f"这是你要的福利图（{img_cnt} / {img_len}）"]),
                             event=event)
                     except ActionFailed:
                         await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
