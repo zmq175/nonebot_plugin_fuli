@@ -86,8 +86,9 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                                 await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
                         img_cnt = img_cnt + 1
             # 不需要清空缓存字典
+        await bot.send(event=event, message="欢迎图包投稿：http://imgup.chengzhi.info/ 不会前端凑活用吧，上传会有点慢，等着显示success再关了。")
     else:
-        await bot.send(event=event, message="这个真没有")
+        await bot.send(event=event, message="这个真没有，图包投稿：http://imgup.chengzhi.info/ 不会前端凑活用吧，上传会有点慢，等着显示success再关了。")
     session.commit()
 
 
@@ -127,6 +128,8 @@ async def handleRandomSetu(bot: Bot, event: MessageEvent, state: T_State):
                     except ActionFailed:
                         await bot.send(event=event, message="逐条发送依旧失败，请尝试其他内容")
                     img_cnt = img_cnt + 1
+        await bot.send(event=event,
+                       message="欢迎图包投稿：http://imgup.chengzhi.info/ 不会前端凑活用吧，上传会有点慢，等着显示success再关了。")
     else:
-        await bot.send(message="这个真没有", event=event)
+        await bot.send(message="这个真没有，图包投稿：http://imgup.chengzhi.info/ 不会前端凑活用吧，上传会有点慢，等着显示success再关了。", event=event)
     session.commit()
